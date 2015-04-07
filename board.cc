@@ -54,12 +54,18 @@ void Board::setWindow(Xwindow *x){
 	this->xw = x;
 }
 
+void Board::movesUpdate(int moves){
+    this->moves = moves;
+}
 
+void Board::updatemoves_count(int moves_count){
+    this->moves_count = moves_count;
+}
 
 // Draw method to graphically display Level and Score
 void Board::draw(){
     if (xw){
-        xw->drawAccessory(700,200, level, score, Xwindow::Black);
+        xw->drawAccessory(700,200, level, score, moves, moves_count, Xwindow::Black);
     }
 }
 

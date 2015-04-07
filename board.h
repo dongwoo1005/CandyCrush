@@ -9,6 +9,8 @@ class Board{
     std::string genSequence;
     int score;
 	int level;
+    int moves;
+    int moves_count;
     static Board *instance;
 	static Xwindow *xw;
 public:
@@ -52,8 +54,10 @@ public:
 
 	// Setters
 	void levelUpdate(int currLevel);
+    void movesUpdate(int moves);
     void boardScore(int currScore);
 	void setGenSequence(std::string genSeq);
+    void updatemoves_count(int moves_count);
 
 	// Getter
     int getScore();

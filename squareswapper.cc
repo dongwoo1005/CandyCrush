@@ -2,6 +2,7 @@
 #include "lv0.h"
 #include "lv1.h"
 #include "lv2.h"
+#include "lv3.h"
 #include "textdisplay.h"
 #include "window.h"
 #include <iostream>
@@ -29,19 +30,23 @@ void SquareSwapper::clearBoard(){
 
 
 // Initial configuration for the commandline options
-void SquareSwapper::init(int leveln, int seed, bool textOnlyMode, bool testingMode, string filename){
+void SquareSwapper::init(int leveln, int seed, bool textOnlyMode, bool testingMode, string filename, bool bonus){
 	td = new TextDisplay;
 
 	this->seed = seed;
 
 	currLevel = leveln;
+
+	moveCount = 0;
 	if (currLevel == 0){
 		Lv = new Lv0;
 	} else if (currLevel == 1){
 		Lv = new Lv1;
 	} else if (currLevel == 2){
 		Lv = new Lv2;
-	} else {
+	} else if (currLevel == 3){
+		Lv = new Lv3;
+	}else {
 		cerr << "Invalid level is provided. We set it to Lv0" << endl;
 		Lv = new Lv0;
 	}
@@ -49,8 +54,14 @@ void SquareSwapper::init(int leveln, int seed, bool textOnlyMode, bool testingMo
 	Lv->setDisplay(td);
 
 	if (!textOnlyMode){
-		theWindow = new Xwindow(1000,520);
-		theBoard->setWindow(theWindow);
+		if (bonus) {
+			theWindow = new Xwindow(1000, 520, 1);
+			theBoard->setWindow(theWindow);
+		}
+		else {
+			theWindow = new Xwindow(1000, 520, 0);
+			theBoard->setWindow(theWindow);
+		}
 	}
 
 
@@ -66,7 +77,11 @@ void SquareSwapper::init(int leveln, int seed, bool textOnlyMode, bool testingMo
 	} else {
 		theBoard = Lv->initBoard(seed);
 	}
+	if (currLevel == 3){
+		currMovesLeft = Lv->getMovesLeft();
+	}
 	theBoard->levelUpdate(currLevel);
+    theBoard->movesUpdate(currMovesLeft);
 	theBoard->draw();
 }
 
@@ -95,6 +110,7 @@ void SquareSwapper::levelup(){
 	if (currLevel == 0){
 		currLevel++;
 		theBoard->levelUpdate(currLevel);
+        theBoard->movesUpdate(currMovesLeft);
 		delete Lv;
 		Lv = new Lv1;
 		Lv->setInitScore(currScore);
@@ -109,12 +125,25 @@ void SquareSwapper::levelup(){
 		delete Lv;
 		Lv = new Lv2;
 		Lv->setInitScore(currScore);
+        theBoard->movesUpdate(currMovesLeft);
 		clearBoard();
 		Lv->setDisplay(td);
 		theBoard = Lv->initBoard(seed);
 		theBoard->draw();
+	} else if (currLevel == 2){	
+		currLevel++;
+		theBoard->levelUpdate(currLevel);
+		delete Lv;
+		Lv = new Lv3;
+		Lv->setInitScore(currScore);
+		clearBoard();
+		Lv->setDisplay(td);
+		theBoard = Lv->initBoard(seed);
+		currMovesLeft = Lv->getMovesLeft();
+        theBoard->movesUpdate(currMovesLeft);
+		theBoard->draw();
 	}
-	else if (currLevel == 2){
+	else if (currLevel == 3){
 		cerr << "You are at the Highest Level!" << endl;
 	}
 }
@@ -134,6 +163,7 @@ void SquareSwapper::leveldown(){
 		clearBoard();
 		Lv->setDisplay(td);
 		theBoard = Lv->initBoard(seed);
+        theBoard->movesUpdate(currMovesLeft);
 		theBoard->draw();
 	}
 	else if (currLevel == 2){
@@ -145,6 +175,18 @@ void SquareSwapper::leveldown(){
 		clearBoard();
 		Lv->setDisplay(td);
 		theBoard = Lv->initBoard(seed);
+        theBoard->movesUpdate(currMovesLeft);
+		theBoard->draw();
+	} else if (currLevel == 3){
+		currLevel--;
+		theBoard->levelUpdate(currLevel);
+		delete Lv;
+		Lv = new Lv2;
+		Lv->setInitScore(currScore);
+		clearBoard();
+		Lv->setDisplay(td);
+		theBoard = Lv->initBoard(seed);
+        theBoard->movesUpdate(currMovesLeft);
 		theBoard->draw();
 	}
 }
@@ -152,11 +194,24 @@ void SquareSwapper::leveldown(){
 
 
 void SquareSwapper::restart(){
-	clearBoard();
-	currScore = 0;
-	Lv->setInitScore(currScore);
-	theBoard = Lv->initBoard(seed);
+
+	if (currLevel == 3){
+        clearBoard();
+        moveCount = 0;
+        Lv->setInitScore(currScore);
+        theBoard = Lv->initBoard(seed);
+        currMovesLeft = Lv->getMovesLeft();
+    } else {
+        clearBoard();
+        currScore = 0;
+        moveCount = 0;
+        currMovesLeft = 0;
+        Lv->setInitScore(currScore);
+        theBoard = Lv->initBoard(seed);
+    }
 	theBoard->levelUpdate(currLevel);
+    theBoard->movesUpdate(currMovesLeft);
+	theBoard->updatemoves_count(moveCount);
 	scoreUpdate();
 	theBoard->draw();
 }
@@ -287,6 +342,12 @@ void SquareSwapper::removeMatches(){
 }
 
 
+
+void SquareSwapper::moveCountUp(){
+	moveCount++;
+    theBoard->updatemoves_count(moveCount);
+}
+
  
 // getter, setter, updater for score
 int SquareSwapper::returnScore(){
@@ -345,7 +406,11 @@ void SquareSwapper::turnTestON(){
 
 // level completion method
 bool SquareSwapper::isLvComplete(){
-	return Lv->isComplete(currScore);
+	if (moveCount == currMovesLeft){
+		cout << "Out of Moves. Restarting." << endl;
+		restart();
+	} 
+	return Lv->isComplete(currScore,moveCount);
 }
 
 
@@ -354,7 +419,11 @@ bool SquareSwapper::isLvComplete(){
 ostream& operator<<(ostream& out, const SquareSwapper& b){
 	out << "Level: " << b.currLevel << endl;
 	out << "Score: " << b.currScore << endl;
-//	out << "Moves Remaining: " << currMovesLeft << endl; // advanced feature
+	if (b.currMovesLeft == 0) {
+		out << "Moves Remaining: Unlimited" << endl;
+	} else {
+		out << "Moves Remaining: " << b.currMovesLeft - b.moveCount << endl; // advanced feature
+	}
 //	out << "Hi Score: " << hiScore << endl;			 	 // advanced feature
 	out << "----------" << endl;
 	out << *b.td;

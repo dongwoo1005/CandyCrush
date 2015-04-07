@@ -1,4 +1,4 @@
-#include "lv2.h"
+#include "lv3.h"
 #include "board.h"
 #include "square.h"
 #include "basic.h"
@@ -10,12 +10,14 @@
 
 using namespace std;
 
-Lv2::~Lv2(){}
+Lv3::~Lv3(){}
 
-Board* Lv2::initBoard(int seed){
-	
+Board* Lv3::initBoard(int seed){
+
 	Board* theBoard = Board::getInstance();
 	theBoard->setDisplay(td);
+
+	movesLeft = 10;
 
 	// seed
 	srand(seed);
@@ -28,12 +30,14 @@ Board* Lv2::initBoard(int seed){
 			// decide colour
 			int	colourn = rand() % 6;
 			char colour = colourn + '0';			
-
+			
+			/*
 			// decide if locked
 			int random = rand() % 100;	// probability of 20%
 			if (random < 20){
 				lock = 'l';
 			}
+			*/
 
 			// Set the square accordingly
 			Basic* basicSq = new Basic;
@@ -46,23 +50,16 @@ Board* Lv2::initBoard(int seed){
 	return theBoard;
 }
 
-bool Lv2::isComplete(int currScore, int moveCount){
-	int reqScore = 500; 
-	Board* board = Board::getInstance();
-	for (int r=0; r<10; r++){
-		for (int c=0; c<10; c++){
-			if (board->theBoard[r][c]->isLocked()){
-				return false;
-			}
-		}
-	}
-	return (currScore - initScore) >= reqScore;
+
+bool Lv3::isComplete(int currScore, int moveCount){
+	int reqScore = 700; 
+	return ((currScore - initScore) >= reqScore) && ((movesLeft - moveCount) >= 0); 
 }
 
-void Lv2::setInitScore(int currScore){
+void Lv3::setInitScore(int currScore){
 	initScore = currScore;
 }
 
-int Lv2::getMovesLeft(){
+int Lv3::getMovesLeft(){
 	return movesLeft;
 }

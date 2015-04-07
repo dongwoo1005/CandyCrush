@@ -15,12 +15,12 @@ class SquareSwapper {
 	Level* Lv;
 	int currScore;
 	int seed;
-//	int currMovesLeft; 		// advanced feature. not implemented yet
+	int currMovesLeft; 		// advanced feature. not implemented yet
 //	int hiScore; 			// advanced feature, not implemented yet
 	TextDisplay* td;
 	Xwindow* theWindow;
 	bool testingModeON;
-
+	int moveCount;
 public:
 
 	// ctor & dtor
@@ -31,7 +31,7 @@ public:
 	void clearBoard();
 
 	// initial configuration for the commandline options
-	void init(int leveln,int seed, bool textOnlyMode, bool testingMode, std::string filename);
+	void init(int leveln,int seed, bool textOnlyMode, bool testingMode, std::string filename, bool bonus);
 
 	// available command
 	void swap(int x, int y, int z);
@@ -48,6 +48,7 @@ public:
     void dropSquares();
     void generateSquares(); 
 	void removeMatches();
+	void moveCountUp();
 
 	// getter, setter, updater for score
     int returnScore();

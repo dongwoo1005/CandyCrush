@@ -84,11 +84,15 @@ Board* Lv1::initBoard(int seed){
 	return theBoard;
 }
 
-bool Lv1::isComplete(int currScore){
+bool Lv1::isComplete(int currScore, int moveCount){
 	int reqScore = 300;
 	return (currScore - initScore) >= reqScore;
 }
 
 void Lv1::setInitScore(int currScore){
 	initScore = currScore;
+}
+
+int Lv1::getMovesLeft(){
+	return movesLeft;
 }

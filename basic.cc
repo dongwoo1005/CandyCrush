@@ -17,6 +17,8 @@ Basic::Basic(){
 }
 
 
+Basic::~Basic(){}
+
 Basic::Basic(int r, int c, char lock, char special, char colour, bool lockFlag){
     this->r = r;
     this->c = c;

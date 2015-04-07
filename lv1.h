@@ -8,8 +8,9 @@ public:
 
 	~Lv1();
 	Board* initBoard(int seed);
-	bool isComplete(int currScore);	
+	bool isComplete(int currScore, int moveCount);	
 	void setInitScore(int currScore);
+	int getMovesLeft();
 };
 
 #endif

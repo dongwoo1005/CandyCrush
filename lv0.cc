@@ -17,11 +17,16 @@ Board* Lv0::initBoard(int seed){
 	return board;
 }
 
-bool Lv0::isComplete(int currScore){
+bool Lv0::isComplete(int currScore, int moveCount){
 	int reqScore = 200;
 	return (currScore - initScore) >= reqScore;
 }
 
 void Lv0::setInitScore(int currScore){
 	initScore = currScore;
+}
+
+
+int Lv0::getMovesLeft(){
+	return movesLeft;
 }

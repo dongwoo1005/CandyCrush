@@ -52,15 +52,15 @@ int main(int argc, char* argv[]){
 
 
 	// Set default variables for command line options
-	bool text, testing = false;
+	bool text, testing, bonus = false;
 	int seedn = 777;
 	int startleveln = 0;
 	string filename = "";
 
 
 	// Set array for the commands and command line option
-	const int numOption = 5;
-	const char* optionList[numOption] = {"-text", "-seed", "-scriptfile", "-startlevel", "-testing"};
+	const int numOption = 6;
+	const char* optionList[numOption] = {"-text", "-seed", "-scriptfile", "-startlevel", "-testing", "-bonus"};
 	const int numCommand = 7;	
 	string commandList[numCommand] = {"swap", "hint", "scramble", "levelup", "leveldown", "restart","help"};
 
@@ -81,15 +81,18 @@ int main(int argc, char* argv[]){
 		}
 		else if (strcmp(argv[i], optionList[4]) == 0){ 	// -testing
 			testing = true;
+		} 
+		else if (strcmp(argv[i], optionList[5]) == 0){  // -bonus
+			bonus = true;
 		}
 	} // end for
 
 
 	// Initiate the Board according to the command line options	
-	SquareSwapper *theGame = new SquareSwapper;					// Creates the game
-	theGame->init(startleveln, seedn, text, testing, filename);	// initiate according to the options
-	theGame->removeMatches();									// Remove existing matches
-	cout << *theGame;											// Print the board
+	SquareSwapper *theGame = new SquareSwapper;							// Creates the game
+	theGame->init(startleveln, seedn, text, testing, filename, bonus);	// initiate according to the options
+	theGame->removeMatches();											// Remove existing matches
+	cout << *theGame;													// Print the board
 
 
     
@@ -124,6 +127,9 @@ int main(int argc, char* argv[]){
 				if (!foundMatch){
 					theGame->swap(x - 1, y, 1);				// swap it back if no match is found
 				} // end if
+				else {
+					theGame->moveCountUp();
+				}
             } // end if
 
             else if (z == 1 && x != 9){ 					// if z=South and x isn't last row
@@ -133,6 +139,9 @@ int main(int argc, char* argv[]){
 				if (!foundMatch){
 					theGame->swap(x + 1, y, 0);				// swap it back if no match is found
 				} // end if
+				else {
+					theGame->moveCountUp();
+				}
             } // end else if
 
             else if (z == 2 && y != 0){						// if z=West and y isn't first col
@@ -142,6 +151,9 @@ int main(int argc, char* argv[]){
 				if (!foundMatch){
 					theGame->swap(x, y - 1, 3);				// swap it back if no match is found
 				} // end if
+				else {
+					theGame->moveCountUp();
+				}
 			} // end else if
 
             else if (z == 3 && y != 9){						// if z=East and y isn't last col
@@ -151,6 +163,9 @@ int main(int argc, char* argv[]){
 				if (!foundMatch){
 					theGame->swap(x, y + 1, 2);				// swap it back if no match is found
 				} // end if
+				else{
+					theGame->moveCountUp();
+				}
 			} // end else if
 
 			else {

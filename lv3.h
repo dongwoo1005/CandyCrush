@@ -1,14 +1,14 @@
-#ifndef __LV0_H__
-#define __LV0_H__
-#include "board.h"
+#ifndef __LV3_H__
+#define __LV3_H__
 #include "level.h"
+#include "square.h"
 
-class Lv0: public Level{
 
+class Lv3: public Level{
 
-public: 
+public:
 
-	~Lv0();
+	~Lv3();
 	Board* initBoard(int seed);
 	bool isComplete(int currScore, int moveCount);
 	void setInitScore(int currScore);

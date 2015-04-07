@@ -6,7 +6,7 @@
 
 class TextDisplay{
 	std::string basicDisplay[10][10];
-	static bool curses_started;
+//	static bool curses_started;
 //	static void endCurses();
 //	void startCurses();
 public:

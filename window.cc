@@ -2,6 +2,7 @@
 #include <X11/Xutil.h>
 #include <iostream>
 #include <cstdlib>
+#include <cstring>
 #include <string>
 #include <sstream>
 #include <unistd.h>
@@ -9,8 +10,10 @@
 
 using namespace std;
 
-Xwindow::Xwindow(int width, int height): width(width), height(height) {
-
+Xwindow::Xwindow(int width, int height, int version): width(width), height(height) {
+	if (version != 0){
+		this->version = version;
+	}
   d = XOpenDisplay(NULL);
   if (d == NULL) {
     cerr << "Cannot open display" << endl;
@@ -32,7 +35,19 @@ Xwindow::Xwindow(int width, int height): width(width), height(height) {
   // Set up colours.
   XColor xcolour;
   Colormap cmap;
-  char color_vals[10][10]={"white", "black", "red", "green", "blue", "cyan", "yellow", "magenta", "orange", "brown"};
+	char color_vals[10][10];
+  	char default_colour[10][10]={"white", "black", "red", "green", "blue", "cyan", "yellow", "magenta", "orange", "brown"};
+	char extra_colour[10][10] = {"white", "black", "coral", "turquoise", "plum", "khaki", "gold", "magenta", "orange", "gray"};
+
+	if (version == 0){
+		for (int i=0; i<10; i++){
+			strcpy (color_vals[i], default_colour[i]);
+		}
+	} else {
+		for (int i=0; i<10; i++){
+			strcpy (color_vals[i], extra_colour[i]);
+		}
+	}
 
   cmap=DefaultColormap(d,DefaultScreen(d));
   for(int i=0; i < 10; ++i) {
@@ -121,14 +136,14 @@ void Xwindow::drawBigString(int x, int y, string msg, int colour) {
 }
 
 
-void Xwindow::drawAccessory(int x, int y, int level, int score, int colour){
-
+void Xwindow::drawAccessory(int x, int y, int level, int score, int moves, int movescount, int colour){
     string str = "SQUARESWAPPER 5000";
     string str2 = "BY DONGWOO WILL SON";
     string str3 = " & HAEJUNG CHOI" ;
     stringstream ss;
     stringstream ss2;
     stringstream ss3;
+    stringstream ss4;
     
     string s_level="";
     ss << level;
@@ -140,6 +155,14 @@ void Xwindow::drawAccessory(int x, int y, int level, int score, int colour){
     ss2 >> s_score;
     string score_string = "    Score: " + s_score;
 
+    string s_moves="";
+    moves = moves -movescount;
+    ss4 << moves;
+    ss4 >> s_moves;
+	if (level < 3) {
+		s_moves = "Unlimited";
+	}
+    string moves_string = "    Moves: " + s_moves;
    /* string s_highscore;
     ss3 << highscore;
     ss3 >> s_highscore;
@@ -153,6 +176,7 @@ void Xwindow::drawAccessory(int x, int y, int level, int score, int colour){
     drawString(x, y+160, str3, colour);
     drawString(x, y+190, level_string, colour);
     drawString (x, y+220, score_string , colour);
+    drawString(x, y+250, moves_string, colour);
 
 }
 
@@ -171,11 +195,8 @@ void Xwindow::fillSquares(int x, int y, int width, int height, bool lockFlag, in
         XFillRectangle(d, w, gc, x + (width/4), y, 5, height );
     }else if (special == 3){ //unstable
         int length = 15;
-       /* XFillRectangle(d, w, gc, x +(width/2), y, 8, height);
-        XFillRectangle(d, w, gc, x , y+(height/2), width, 8);*/
         XFillRectangle(d, w, gc, x + width/6+9, y +height/6+2, length,length);
         XFillRectangle(d, w, gc, x + width/6+9, y +height/6+19, length,length);
-      //  XFillRectangle(d, w, gc, x + width/3+3, y +2*height/6-3, length,length);
 
     }else if (special == 4){ //psychedelic
         int length = 6;
