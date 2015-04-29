@@ -23,17 +23,17 @@ Requirements:
 
 Available Commands:
 --------------------
-	swap x y z
+`swap x y z`
 swaps the square at the (x,y) co-ordinate with the square in the z direction (0 for north, 1 for south, 2 for west and 3 for east) e.g. swap 4 5 3 results in an attempt to swap the square at (4,5) to the square to the east (right) i.e. the square at cell location (4,6).
-	hint
+`hint`
 the game returns a valid move (x,y,z as above) that would lead to a match.
-	scramble
+`scramble`
 Available only if no moves are possible, this command reshuffles the squares on the board (no new cells are created)
-	levelup
+`levelup`
 Increases the difficulty level of the game by one. You may clear the board and create a new one suitable for that level. If there is no higher level, this command has no effect.
-	leveldown
+`leveldown`
 The same as above, but this time decreasing the difficulty level of the game by one.
-	restart
+`restart`
 Clears the board and starts a new game at the same level. The player's score is reset to 0. If you have implemented a high score feature, that score is not reset.
 
 Command line option:
