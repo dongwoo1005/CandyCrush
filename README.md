@@ -24,7 +24,7 @@ Requirements:
 Available Commands:
 --------------------
 `swap x y z`<br>
-swaps the square at the (x,y) co-ordinate with the square in the z direction (0 for north, 1 for south, 2 for west and 3 for east) e.g. swap 4 5 3 results in an attempt to swap the square at (4,5) to the square to the east (right) i.e. the square at cell location (4,6).<br>
+- swaps the square at the (x,y) co-ordinate with the square in the z direction (0 for north, 1 for south, 2 for west and 3 for east) e.g. swap 4 5 3 results in an attempt to swap the square at (4,5) to the square to the east (right) i.e. the square at cell location (4,6).
 `hint`<br>
 the game returns a valid move (x,y,z as above) that would lead to a match.<br>
 `scramble`<br>
